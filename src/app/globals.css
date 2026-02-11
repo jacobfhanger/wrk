@@ -1,31 +1,106 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fdf6f9;
+  --foreground: #4a3347;
+  --pink: #f0a6ca;
+  --pink-light: #fce4ec;
+  --pink-deep: #e879a8;
+  --lavender: #c3aed6;
+  --lavender-light: #ede7f6;
+  --peach: #ffd6ba;
+  --peach-light: #fff3e6;
+  --sage: #b8d8be;
+  --cream: #fef9f4;
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.7);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-mono: ui-monospace, "Cascadia Code", "Fira Code", monospace;
-  --animate-fade-in: fade-in 0.3s ease-out;
+  --font-sans: "DM Sans", system-ui, -apple-system, sans-serif;
+  --animate-fade-in: fade-in 0.4s ease-out;
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-shimmer: shimmer 2s ease-in-out infinite;
 }
 
 body {
-  background: var(--background);
+  background: linear-gradient(135deg, #fdf2f8 0%, #ede7f6 40%, #fce4ec 70%, #fff3e6 100%);
+  background-attachment: fixed;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+/* Gradient button */
+.btn-gradient {
+  background: linear-gradient(135deg, #f0a6ca, #c3aed6);
+  transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+  background: linear-gradient(135deg, #e879a8, #b39ddb);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(240, 166, 202, 0.35);
+}
+
+.btn-gradient:disabled {
+  opacity: 0.5;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Soft card hover */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(195, 174, 214, 0.2);
 }
 
 @keyframes fade-in {
   from {
     opacity: 0;
-    transform: translateY(10px) translateX(-50%);
+    transform: translateY(12px) translateX(-50%);
   }
   to {
     opacity: 1;
     transform: translateY(0) translateX(-50%);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
   }
 }

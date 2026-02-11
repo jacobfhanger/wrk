@@ -48,9 +48,9 @@ export default function Home() {
 
       addItem(newItem);
       setWardrobe(getWardrobe());
-      showToast(`Added "${analysis.name}" to your wardrobe!`);
+      showToast(`added "${analysis.name}" to your closet!`);
     } catch {
-      showToast("Failed to analyze the clothing item. Please try again.");
+      showToast("oops, couldn't analyze that one. try again?");
     } finally {
       setIsAnalyzing(false);
     }
@@ -60,38 +60,45 @@ export default function Home() {
     const item = wardrobe.find((i) => i.id === id);
     removeItem(id);
     setWardrobe(getWardrobe());
-    if (item) showToast(`Removed "${item.name}" from your wardrobe.`);
+    if (item) showToast(`removed "${item.name}" from your closet`);
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-4 py-4">
+      <header className="glass-strong sticky top-0 z-10">
+        <div className="max-w-4xl mx-auto px-5 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Wardrobe Consultant
+              <h1 className="text-2xl font-semibold tracking-tight" style={{ color: '#6b4c6e' }}>
+                my wardrobe
               </h1>
-              <p className="text-sm text-gray-500">
-                AI-powered outfit suggestions from your closet
+              <p className="text-sm" style={{ color: '#b8879b' }}>
+                your ai bestie for outfit inspo
               </p>
             </div>
             <div className="text-right">
-              <span className="text-2xl font-semibold text-indigo-600">
+              <span
+                className="text-2xl font-semibold"
+                style={{
+                  background: 'linear-gradient(135deg, #f0a6ca, #c3aed6)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
                 {wardrobe.length}
               </span>
-              <p className="text-xs text-gray-500">items</p>
+              <p className="text-xs" style={{ color: '#b8879b' }}>pieces</p>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-6 space-y-6">
+      <main className="max-w-4xl mx-auto px-5 py-6 space-y-5">
         {/* Upload Section */}
-        <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">
-            Add to your wardrobe
+        <section className="glass rounded-3xl p-6 card-hover">
+          <h2 className="text-base font-medium mb-4" style={{ color: '#6b4c6e' }}>
+            add something cute
           </h2>
           <ImageUpload
             onUpload={handleImageUpload}
@@ -100,34 +107,36 @@ export default function Home() {
         </section>
 
         {/* Tab Navigation */}
-        <div className="flex gap-1 bg-gray-200 p-1 rounded-xl">
+        <div className="flex gap-1.5 p-1.5 rounded-2xl" style={{ background: 'rgba(195, 174, 214, 0.2)' }}>
           <button
             onClick={() => {
               setActiveTab("wardrobe");
               setHighlightIds([]);
             }}
-            className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${
+            className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-medium transition-all ${
               activeTab === "wardrobe"
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-600 hover:text-gray-900"
+                ? "glass-strong shadow-sm"
+                : "hover:bg-white/30"
             }`}
+            style={{ color: activeTab === "wardrobe" ? '#6b4c6e' : '#9b7ba3' }}
           >
-            My Wardrobe
+            my closet
           </button>
           <button
             onClick={() => setActiveTab("suggest")}
-            className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${
+            className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-medium transition-all ${
               activeTab === "suggest"
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-600 hover:text-gray-900"
+                ? "glass-strong shadow-sm"
+                : "hover:bg-white/30"
             }`}
+            style={{ color: activeTab === "suggest" ? '#6b4c6e' : '#9b7ba3' }}
           >
-            Outfit Suggestions
+            outfit inspo
           </button>
         </div>
 
         {/* Content */}
-        <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <section className="glass rounded-3xl p-6">
           {activeTab === "wardrobe" && (
             <WardrobeGrid
               items={wardrobe}
@@ -152,7 +161,13 @@ export default function Home() {
 
       {/* Toast */}
       {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-lg text-sm animate-fade-in z-50">
+        <div
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 px-5 py-3 rounded-2xl shadow-lg text-sm animate-fade-in z-50"
+          style={{
+            background: 'linear-gradient(135deg, #6b4c6e, #9b7ba3)',
+            color: 'white',
+          }}
+        >
           {toast}
         </div>
       )}

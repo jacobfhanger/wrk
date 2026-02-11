@@ -9,14 +9,14 @@ interface WardrobeGridProps {
 }
 
 const CATEGORY_LABELS: Record<ClothingCategory, string> = {
-  tops: "Tops",
-  bottoms: "Bottoms",
-  dresses: "Dresses",
-  outerwear: "Outerwear",
-  shoes: "Shoes",
-  accessories: "Accessories",
-  activewear: "Activewear",
-  formal: "Formal",
+  tops: "tops",
+  bottoms: "bottoms",
+  dresses: "dresses",
+  outerwear: "outerwear",
+  shoes: "shoes",
+  accessories: "accessories",
+  activewear: "activewear",
+  formal: "formal",
 };
 
 export default function WardrobeGrid({
@@ -26,22 +26,31 @@ export default function WardrobeGrid({
 }: WardrobeGridProps) {
   if (items.length === 0) {
     return (
-      <div className="text-center py-16 text-gray-500">
-        <svg
-          className="w-16 h-16 mx-auto mb-4 text-gray-300"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+      <div className="text-center py-16">
+        <div
+          className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
+          style={{ background: 'linear-gradient(135deg, #fce4ec, #ede7f6)' }}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
+          <svg
+            className="w-8 h-8"
+            fill="none"
+            stroke="#c3aed6"
+            viewBox="0 0 24 24"
             strokeWidth={1.5}
-            d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
-          />
-        </svg>
-        <p className="text-lg font-medium">Your wardrobe is empty</p>
-        <p className="text-sm mt-1">Upload photos of your clothes to get started</p>
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+            />
+          </svg>
+        </div>
+        <p className="text-lg font-medium" style={{ color: '#6b4c6e' }}>
+          your closet is empty bestie
+        </p>
+        <p className="text-sm mt-1" style={{ color: '#b8879b' }}>
+          upload some fits to get started
+        </p>
       </div>
     );
   }
@@ -59,23 +68,32 @@ export default function WardrobeGrid({
     <div className="space-y-8">
       {Object.entries(grouped).map(([category, categoryItems]) => (
         <div key={category}>
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">
+          <h3 className="text-base font-medium mb-3" style={{ color: '#6b4c6e' }}>
             {CATEGORY_LABELS[category as ClothingCategory] || category}
-            <span className="text-sm font-normal text-gray-500 ml-2">
+            <span className="text-sm font-normal ml-2" style={{ color: '#c3aed6' }}>
               ({categoryItems.length})
             </span>
           </h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
             {categoryItems.map((item) => (
               <div
                 key={item.id}
-                className={`group relative rounded-xl overflow-hidden border transition-all ${
+                className={`group relative rounded-2xl overflow-hidden transition-all card-hover ${
                   highlightIds?.includes(item.id)
-                    ? "border-indigo-500 ring-2 ring-indigo-200 scale-105"
-                    : "border-gray-200 hover:border-gray-300"
+                    ? "ring-2 scale-105"
+                    : ""
                 }`}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.6)',
+                  border: highlightIds?.includes(item.id)
+                    ? '2px solid #f0a6ca'
+                    : '1px solid rgba(195, 174, 214, 0.25)',
+                  ...(highlightIds?.includes(item.id)
+                    ? { boxShadow: '0 0 20px rgba(240, 166, 202, 0.25)' }
+                    : {}),
+                }}
               >
-                <div className="aspect-square bg-gray-100">
+                <div className="aspect-square" style={{ background: '#f8f0f5' }}>
                   <img
                     src={`data:image/jpeg;base64,${item.imageData}`}
                     alt={item.name}
@@ -83,15 +101,18 @@ export default function WardrobeGrid({
                   />
                 </div>
                 <div className="p-2.5">
-                  <p className="text-sm font-medium text-gray-800 truncate">
+                  <p className="text-sm font-medium truncate" style={{ color: '#6b4c6e' }}>
                     {item.name}
                   </p>
                   <div className="flex items-center gap-1.5 mt-1">
                     <span
-                      className="w-3 h-3 rounded-full border border-gray-200 flex-shrink-0"
-                      style={{ backgroundColor: item.color.toLowerCase() }}
+                      className="w-3 h-3 rounded-full flex-shrink-0"
+                      style={{
+                        backgroundColor: item.color.toLowerCase(),
+                        border: '1.5px solid rgba(195, 174, 214, 0.3)',
+                      }}
                     />
-                    <p className="text-xs text-gray-500 truncate">
+                    <p className="text-xs truncate" style={{ color: '#b8879b' }}>
                       {item.color} &middot; {item.style}
                     </p>
                   </div>
@@ -102,7 +123,8 @@ export default function WardrobeGrid({
                       e.stopPropagation();
                       onRemove(item.id);
                     }}
-                    className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-sm"
+                    className="absolute top-2 right-2 w-7 h-7 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-sm text-white"
+                    style={{ background: 'linear-gradient(135deg, #e879a8, #c3aed6)' }}
                     title="Remove item"
                   >
                     &times;

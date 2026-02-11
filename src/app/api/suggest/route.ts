@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
     const wardrobeSummary = wardrobe.map((item: ClothingItem) => ({
       id: item.id,
       name: item.name,
+      brand: item.brand || undefined,
       category: item.category,
       color: item.color,
       style: item.style,

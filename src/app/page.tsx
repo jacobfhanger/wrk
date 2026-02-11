@@ -37,23 +37,38 @@ export default function Home() {
 
       if (!res.ok) throw new Error("Analysis failed");
 
-      const analysis: AnalysisResult = await res.json();
+      const { items: analysisResults }: { items: AnalysisResult[] } = await res.json();
 
-      const newItem: ClothingItem = {
-        id: uuidv4(),
-        ...analysis,
-        imageData: compressedBase64,
-        addedAt: new Date().toISOString(),
-      };
+      let addedCount = 0;
+      for (const analysis of analysisResults) {
+        const newItem: ClothingItem = {
+          id: uuidv4(),
+          ...analysis,
+          imageData: compressedBase64,
+          addedAt: new Date().toISOString(),
+        };
 
-      const stored = await addItem(newItem);
-      if (!stored) {
-        showToast("your closet is full! remove some items to make room");
-        return false;
+        const stored = await addItem(newItem);
+        if (!stored) {
+          showToast("your closet is full! remove some items to make room");
+          break;
+        }
+        addedCount++;
       }
-      setWardrobe(await getWardrobe());
-      showToast(`added "${analysis.name}" to your closet!`);
-      return true;
+
+      if (addedCount > 0) {
+        setWardrobe(await getWardrobe());
+        if (addedCount === 1) {
+          const name = analysisResults[0].brand
+            ? `${analysisResults[0].brand} ${analysisResults[0].name}`
+            : analysisResults[0].name;
+          showToast(`added "${name}" to your closet!`);
+        } else {
+          showToast(`added ${addedCount} pieces to your closet!`);
+        }
+        return true;
+      }
+      return false;
     } catch {
       showToast("oops, couldn't analyze that one. try again?");
       return false;

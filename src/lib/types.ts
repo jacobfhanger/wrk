@@ -1,6 +1,7 @@
 export interface ClothingItem {
   id: string;
   name: string;
+  brand?: string;
   category: ClothingCategory;
   color: string;
   style: string;
@@ -40,6 +41,7 @@ export interface OutfitSuggestion {
 
 export interface AnalysisResult {
   name: string;
+  brand?: string;
   category: ClothingCategory;
   color: string;
   style: string;

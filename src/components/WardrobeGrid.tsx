@@ -170,6 +170,11 @@ export default function WardrobeGrid({
                   <p className="text-sm font-medium truncate" style={{ color: '#6b4c6e' }}>
                     {item.name}
                   </p>
+                  {item.brand && (
+                    <p className="text-xs truncate" style={{ color: '#e879a8' }}>
+                      {item.brand}
+                    </p>
+                  )}
                   <div className="flex items-center gap-1.5 mt-1">
                     <span
                       className="w-3 h-3 rounded-full flex-shrink-0"

@@ -18,7 +18,7 @@ export default function Home() {
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
-    setWardrobe(getWardrobe());
+    getWardrobe().then(setWardrobe);
   }, []);
 
   const showToast = useCallback((message: string) => {
@@ -46,12 +46,12 @@ export default function Home() {
         addedAt: new Date().toISOString(),
       };
 
-      const stored = addItem(newItem);
+      const stored = await addItem(newItem);
       if (!stored) {
         showToast("your closet is full! remove some items to make room");
         return false;
       }
-      setWardrobe(getWardrobe());
+      setWardrobe(await getWardrobe());
       showToast(`added "${analysis.name}" to your closet!`);
       return true;
     } catch {
@@ -62,10 +62,10 @@ export default function Home() {
     }
   }
 
-  function handleRemove(id: string) {
+  async function handleRemove(id: string) {
     const item = wardrobe.find((i) => i.id === id);
-    removeItem(id);
-    setWardrobe(getWardrobe());
+    await removeItem(id);
+    setWardrobe(await getWardrobe());
     if (item) showToast(`removed "${item.name}" from your closet`);
   }
 

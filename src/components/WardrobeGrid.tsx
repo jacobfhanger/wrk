@@ -131,7 +131,7 @@ export default function WardrobeGrid({
   return (
     <div className="space-y-8">
       {Object.entries(grouped).map(([category, categoryItems]) => (
-        <div key={category}>
+        <div key={category} style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 300px' }}>
           <h3 className="text-base font-medium mb-3" style={{ color: '#6b4c6e' }}>
             {CATEGORY_LABELS[category as ClothingCategory] || category}
             <span className="text-sm font-normal ml-2" style={{ color: '#c3aed6' }}>
@@ -161,6 +161,8 @@ export default function WardrobeGrid({
                   <img
                     src={`data:image/jpeg;base64,${item.imageData}`}
                     alt={item.name}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover"
                   />
                 </div>

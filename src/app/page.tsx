@@ -10,6 +10,50 @@ import OutfitSuggestions from "@/components/OutfitSuggestions";
 
 type Tab = "wardrobe" | "suggest";
 
+const MAX_DIMENSION = 500;
+
+function resizeImage(src: string, format: "png" | "jpeg"): Promise<string> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      let { width, height } = img;
+      if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
+        const scale = MAX_DIMENSION / Math.max(width, height);
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d")!;
+      if (format === "jpeg") {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, width, height);
+      }
+      ctx.drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL(`image/${format}`, format === "jpeg" ? 0.7 : undefined));
+    };
+    img.src = src;
+  });
+}
+
+async function removeAndCompress(dataUrl: string): Promise<string> {
+  try {
+    const { removeBackground } = await import("@imgly/background-removal");
+    const blob = await fetch(dataUrl).then((r) => r.blob());
+    const resultBlob = await removeBackground(blob, {
+      output: { format: "image/png" },
+    });
+    const resultUrl = URL.createObjectURL(resultBlob);
+    const compressed = await resizeImage(resultUrl, "png");
+    URL.revokeObjectURL(resultUrl);
+    return compressed;
+  } catch {
+    // Fall back to jpeg compression if bg removal fails
+    return resizeImage(dataUrl, "jpeg");
+  }
+}
+
 export default function Home() {
   const [wardrobe, setWardrobe] = useState<ClothingItem[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -26,18 +70,26 @@ export default function Home() {
     setTimeout(() => setToast(null), 3000);
   }, []);
 
-  async function handleImageUpload(originalBase64: string, compressedBase64: string, mediaType: string): Promise<boolean> {
+  async function handleImageUpload(dataUrl: string, mediaType: string): Promise<boolean> {
     setIsAnalyzing(true);
     try {
-      const res = await fetch("/api/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageData: originalBase64, mediaType }),
-      });
+      const originalBase64 = dataUrl.split(",")[1];
 
-      if (!res.ok) throw new Error("Analysis failed");
+      // Run API analysis and background removal in parallel
+      const [apiResult, processedDataUrl] = await Promise.all([
+        fetch("/api/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ imageData: originalBase64, mediaType }),
+        }).then((res) => {
+          if (!res.ok) throw new Error("Analysis failed");
+          return res.json();
+        }),
+        removeAndCompress(dataUrl),
+      ]);
 
-      const { items: analysisResults }: { items: AnalysisResult[] } = await res.json();
+      const { items: analysisResults }: { items: AnalysisResult[] } = apiResult;
+      const compressedBase64 = processedDataUrl.split(",")[1];
 
       let addedCount = 0;
       for (const analysis of analysisResults) {

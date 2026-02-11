@@ -6,7 +6,7 @@ const MAX_DIMENSION = 600;
 const JPEG_QUALITY = 0.7;
 
 interface ImageUploadProps {
-  onUpload: (imageData: string, mediaType: string) => Promise<boolean>;
+  onUpload: (originalBase64: string, compressedBase64: string, mediaType: string) => Promise<boolean>;
   isAnalyzing: boolean;
 }
 
@@ -46,9 +46,10 @@ export default function ImageUpload({
     reader.onload = async (e) => {
       const result = e.target?.result as string;
       setPreview(result);
+      const originalBase64 = result.split(",")[1];
       const compressed = await compressImage(result);
-      const base64 = compressed.split(",")[1];
-      const success = await onUpload(base64, "image/jpeg");
+      const compressedBase64 = compressed.split(",")[1];
+      const success = await onUpload(originalBase64, compressedBase64, file.type);
       if (success) setPreview(null);
     };
     reader.readAsDataURL(file);

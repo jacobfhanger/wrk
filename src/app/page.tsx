@@ -26,13 +26,13 @@ export default function Home() {
     setTimeout(() => setToast(null), 3000);
   }, []);
 
-  async function handleImageUpload(imageData: string, mediaType: string): Promise<boolean> {
+  async function handleImageUpload(originalBase64: string, compressedBase64: string, mediaType: string): Promise<boolean> {
     setIsAnalyzing(true);
     try {
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageData, mediaType }),
+        body: JSON.stringify({ imageData: originalBase64, mediaType }),
       });
 
       if (!res.ok) throw new Error("Analysis failed");
@@ -42,7 +42,7 @@ export default function Home() {
       const newItem: ClothingItem = {
         id: uuidv4(),
         ...analysis,
-        imageData,
+        imageData: compressedBase64,
         addedAt: new Date().toISOString(),
       };
 

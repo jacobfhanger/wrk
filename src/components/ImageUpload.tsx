@@ -2,9 +2,33 @@
 
 import { useState, useRef } from "react";
 
+const MAX_DIMENSION = 600;
+const JPEG_QUALITY = 0.7;
+
 interface ImageUploadProps {
-  onUpload: (imageData: string, mediaType: string) => void;
+  onUpload: (imageData: string, mediaType: string) => Promise<boolean>;
   isAnalyzing: boolean;
+}
+
+function compressImage(dataUrl: string): Promise<string> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      let { width, height } = img;
+      if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
+        const scale = MAX_DIMENSION / Math.max(width, height);
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL("image/jpeg", JPEG_QUALITY));
+    };
+    img.src = dataUrl;
+  });
 }
 
 export default function ImageUpload({
@@ -19,11 +43,13 @@ export default function ImageUpload({
     if (!file.type.startsWith("image/")) return;
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       const result = e.target?.result as string;
       setPreview(result);
-      const base64 = result.split(",")[1];
-      onUpload(base64, file.type);
+      const compressed = await compressImage(result);
+      const base64 = compressed.split(",")[1];
+      const success = await onUpload(base64, "image/jpeg");
+      if (success) setPreview(null);
     };
     reader.readAsDataURL(file);
   }

@@ -8,10 +8,16 @@ export function getWardrobe(): ClothingItem[] {
   return data ? JSON.parse(data) : [];
 }
 
-export function addItem(item: ClothingItem): void {
+export function addItem(item: ClothingItem): boolean {
   const items = getWardrobe();
   items.push(item);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    return true;
+  } catch {
+    // QuotaExceededError - storage is full
+    return false;
+  }
 }
 
 export function removeItem(id: string): void {

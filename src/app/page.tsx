@@ -26,7 +26,7 @@ export default function Home() {
     setTimeout(() => setToast(null), 3000);
   }, []);
 
-  async function handleImageUpload(imageData: string, mediaType: string) {
+  async function handleImageUpload(imageData: string, mediaType: string): Promise<boolean> {
     setIsAnalyzing(true);
     try {
       const res = await fetch("/api/analyze", {
@@ -46,11 +46,17 @@ export default function Home() {
         addedAt: new Date().toISOString(),
       };
 
-      addItem(newItem);
+      const stored = addItem(newItem);
+      if (!stored) {
+        showToast("your closet is full! remove some items to make room");
+        return false;
+      }
       setWardrobe(getWardrobe());
       showToast(`added "${analysis.name}" to your closet!`);
+      return true;
     } catch {
       showToast("oops, couldn't analyze that one. try again?");
+      return false;
     } finally {
       setIsAnalyzing(false);
     }

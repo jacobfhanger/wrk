@@ -62,7 +62,7 @@ export default function OutfitSuggestions({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          wardrobe,
+          wardrobe: wardrobe.map(({ imageData, ...rest }) => rest),
           occasion: occasion || undefined,
           season: season || undefined,
           preferences: preferences || undefined,
